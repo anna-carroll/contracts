@@ -1,2 +1,2 @@
 # contracts
-❀ ✰ ☺ ☽ smart contracts ☽ ☺ ✰ ❀ 
+❀ ✰ ☽ smart contracts ☽ ✰ ❀ 

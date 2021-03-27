@@ -1,7 +1,7 @@
 {
   "name": "contracts",
   "version": "1.0.0",
-  "description": "Smart contracts for fun and profit",
+  "description": "smart contracts by anna",
   "main": "",
   "scripts": {
     "prettier": "prettier --write './contracts' ./test",

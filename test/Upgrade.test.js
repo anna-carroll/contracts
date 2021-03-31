@@ -2,7 +2,7 @@ const { expect } = require('chai');
 const {
   deployImplementation,
   deployUpgradeSetupWithImplementation,
-} = require('./deployUpgradeSetup');
+} = require('../scripts/deploy');
 
 describe('Upgrade', async () => {
   let proxy, upgradeBeacon, upgradeBeaconController;

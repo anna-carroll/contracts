@@ -1,28 +1,24 @@
-const { ethers } = require('hardhat');
 const { expect } = require('chai');
 const {
-  deployProxyWithImplementation,
-} = require('./deployProxyWithImplementation');
-const { upgradeToImplementation } = require('./upgradeToImplementation');
+  deployImplementation,
+  deployUpgradeSetupWithImplementation,
+} = require('./deployUpgradeSetup');
 
 describe('Upgrade', async () => {
-  let proxy, signer, upgradeBeacon;
+  let proxy, upgradeBeacon, upgradeBeaconController;
   const a = 5;
   const b = 10;
   const stateVar = 17;
 
   before(async () => {
-    const signerArray = await ethers.getSigners();
-    signer = signerArray[0];
-
     // SETUP CONTRACT SUITE
-    const { contracts } = await deployProxyWithImplementation(
+    const { contracts } = await deployUpgradeSetupWithImplementation(
       'MysteryMathV1',
-      '0x',
     );
 
-    proxy = contracts.proxy;
+    proxy = contracts.proxyWithImplementation;
     upgradeBeacon = contracts.upgradeBeacon;
+    upgradeBeaconController = contracts.upgradeBeaconController;
 
     // Set state of proxy
     await proxy.setState(stateVar);
@@ -45,7 +41,13 @@ describe('Upgrade', async () => {
 
   it('Upgrades without problem', async () => {
     // Deploy Implementation 2
-    await upgradeToImplementation(upgradeBeacon, signer, 'MysteryMathV2');
+    const implementation = await deployImplementation('MysteryMathV2');
+
+    // Upgrade to implementation 2
+    await upgradeBeaconController.upgrade(
+      upgradeBeacon.address,
+      implementation.address,
+    );
   });
 
   it('Post-Upgrade returns version 2', async () => {

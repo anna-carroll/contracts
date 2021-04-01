@@ -23,9 +23,9 @@ Many thanks to
 
 ## License Notes 
 
-The following work has been forked from code that I wrote for [Optics](https://github.com/celo-org/optics-monorepo) at commit [`be4704e8`](https://github.com/celo-org/optics-monorepo/commit/be4704e85a11f51e2371e75e86be5a8c8ca6bc2f):
-- `UpgradeBeacon` contracts  - `UpgradeBeacon.sol`, `UpgradeBeaconProxy.sol`, `UpgradeBeaconController.sol`
-- `Upgrade` tests and test contracts - `test/Upgrade.test.js` and `MysteryMath` contracts
-- hardhat deploy scripts - `scripts/deploy.js`
+I authored the code in this repo. 
 
-Code has been reproduced in my personal repo under the terms of the Apache 2 License. 
+Some copyright is held by my employer(s). Those files have been reproduced under the terms of the Apache 2.0 license. These files have been explicitly marked. 
+
+All other files are available under the MIT License.
+

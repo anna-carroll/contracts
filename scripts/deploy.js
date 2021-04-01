@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Reproduced from https://github.com/celo-org/optics-monorepo/ under the terms of Apache-2.0
+
 async function deployImplementation(implementationName, deployArgs = []) {
   const Implementation = await ethers.getContractFactory(implementationName);
   const implementation = await Implementation.deploy(...deployArgs);

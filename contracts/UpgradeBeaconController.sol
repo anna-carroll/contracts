@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
+// Reproduced from https://github.com/celo-org/optics-monorepo/ under the terms of Apache-2.0
+
 pragma solidity >=0.6.11;
 
 import "@openzeppelin/contracts/access/Ownable.sol";

@@ -4,7 +4,7 @@
 const { expect } = require('chai');
 const {
   deployImplementation,
-  deployUpgradeSetupWithImplementation,
+  deployUpgradeSetupAndProxy,
 } = require('../scripts/deploy');
 
 describe('Upgrade', async () => {
@@ -15,9 +15,7 @@ describe('Upgrade', async () => {
 
   before(async () => {
     // SETUP CONTRACT SUITE
-    const { contracts } = await deployUpgradeSetupWithImplementation(
-      'MysteryMathV1',
-    );
+    const contracts = await deployUpgradeSetupAndProxy('MysteryMathV1');
 
     proxy = contracts.proxyWithImplementation;
     upgradeBeacon = contracts.upgradeBeacon;

@@ -57,8 +57,7 @@ async function deployUpgradeSetup(
   const proxy = await deployProxy(upgradeBeaconAddress, initializeData);
 
   // instantiate proxy with Proxy Contract address + Implementation interface
-  const signerArray = await ethers.getSigners();
-  const signer = signerArray[0];
+  const [signer] = await ethers.getSigners();
   const proxyWithImplementation = new ethers.Contract(
     proxy.address,
     Implementation.interface,
@@ -67,52 +66,91 @@ async function deployUpgradeSetup(
   return { proxy, proxyWithImplementation };
 }
 
-async function deployUpgradeSetupWithImplementation(
-  implementationName,
-  implementationDeployArgs = [],
-  proxyInitializeArgs = [],
-  implementationInitializeFunctionIdentifier = 'initialize',
+async function deployUpgradeSetup(
+    implementationName,
+    implementationDeployArgs,
+    upgradeBeaconController,
 ) {
   // Deploy Implementation
   const implementation = await deployImplementation(
-    implementationName,
-    implementationDeployArgs,
+      implementationName,
+      implementationDeployArgs,
   );
-
-  // Deploy UpgradeBeaconController
-  const upgradeBeaconController = await deployUpgradeBeaconController();
 
   // Deploy UpgradeBeacon
   const upgradeBeacon = await deployUpgradeBeacon(
-    implementation.address,
-    upgradeBeaconController.address,
+      implementation.address,
+      upgradeBeaconController.address,
   );
+
+  return { implementation, upgradeBeaconController, upgradeBeacon };
+}
+
+async function deployUpgradeSetupAndController(
+    implementationName,
+    implementationDeployArgs,
+) {
+  // Deploy UpgradeBeaconController
+  const upgradeBeaconController = await deployUpgradeBeaconController();
+
+  return deployUpgradeSetup(
+      implementationName,
+      implementationDeployArgs,
+      upgradeBeaconController,
+  );
+}
+
+async function deployUpgradeSetupAndProxy(
+    implementationName,
+    implementationDeployArgs = [],
+    proxyInitializeArgs = [],
+    upgradeBeaconController,
+    implementationInitializeFunctionIdentifier = 'initialize',
+) {
+  let upgradeSetup;
+  if (upgradeBeaconController) {
+    upgradeSetup = await deployUpgradeSetup(
+        implementationName,
+        implementationDeployArgs,
+        upgradeBeaconController,
+    );
+  } else {
+    upgradeSetup = await deployUpgradeSetupAndController(
+        implementationName,
+        implementationDeployArgs,
+    );
+    upgradeBeaconController = upgradeSetup.upgradeBeaconController;
+  }
+
+  const { implementation, upgradeBeacon } = upgradeSetup;
 
   // Construct initialize data
   // Deploy Proxy Contract and initialize
-  const { proxy, proxyWithImplementation } = await deployUpgradeSetup(
-    upgradeBeacon.address,
-    implementationName,
-    proxyInitializeArgs,
-    implementationInitializeFunctionIdentifier,
+  const {
+    proxy,
+    proxyWithImplementation,
+  } = await deployProxyWithImplementation(
+      upgradeBeacon.address,
+      implementationName,
+      proxyInitializeArgs,
+      implementationInitializeFunctionIdentifier,
   );
 
   return {
-    contracts: {
-      implementation,
-      upgradeBeaconController,
-      upgradeBeacon,
-      proxy,
-      proxyWithImplementation,
-    },
+    implementation,
+    upgradeBeaconController,
+    upgradeBeacon,
+    proxy,
+    proxyWithImplementation,
   };
 }
 
 module.exports = {
-  deployUpgradeSetupWithImplementation,
-  deployImplementation,
   deployUpgradeBeaconController,
+  deployUpgradeSetup,
+  deployImplementation,
   deployUpgradeBeacon,
+  deployUpgradeSetupAndProxy,
   deployProxy,
-  deployProxyWithImplementation: deployUpgradeSetup,
+  deployProxyWithImplementation,
 };

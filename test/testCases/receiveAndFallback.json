@@ -1,0 +1,39 @@
+{
+  "testCases": [
+    {
+      "testCaseDescription": "receive implemented, fallback NOT implemented",
+      "contractName": "TestReceiveNoFallback",
+      "dataAndValueResult": "revert",
+      "dataOnlyResult": "revert",
+      "valueOnlyResult": "receive"
+    },
+    {
+      "testCaseDescription": "receive implemented, fallback implemented, fallback NOT payable",
+      "contractName": "TestReceiveAndFallbackNotPayable",
+      "dataAndValueResult": "revert",
+      "dataOnlyResult": "fallback",
+      "valueOnlyResult": "receive"
+    },
+    {
+      "testCaseDescription": "receive implemented, fallback implemented, fallback payable",
+      "contractName": "TestReceiveAndFallbackPayable",
+      "dataAndValueResult": "fallback",
+      "dataOnlyResult": "fallback",
+      "valueOnlyResult": "receive"
+    },
+    {
+      "testCaseDescription": "receive NOT implemented, fallback implemented, fallback payable",
+      "contractName": "TestNoReceiveAndFallbackPayable",
+      "dataAndValueResult": "fallback",
+      "dataOnlyResult": "fallback",
+      "valueOnlyResult": "fallback"
+    },
+    {
+      "testCaseDescription": "receive NOT implemented, fallback implemented, fallback NOT payable",
+      "contractName": "TestNoReceiveAndFallbackNotPayable",
+      "dataAndValueResult": "revert",
+      "dataOnlyResult": "fallback",
+      "valueOnlyResult": "revert"
+    }
+  ]
+}

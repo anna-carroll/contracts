@@ -9,20 +9,20 @@ async function deployImplementation(implementationName, deployArgs = []) {
 
 async function deployUpgradeBeaconController() {
   const UpgradeBeaconController = await ethers.getContractFactory(
-    'UpgradeBeaconController',
+      'UpgradeBeaconController',
   );
   const upgradeBeaconController = await UpgradeBeaconController.deploy();
   return upgradeBeaconController.deployed();
 }
 
 async function deployUpgradeBeacon(
-  implementationAddress,
-  upgradeBeaconControllerAddress,
+    implementationAddress,
+    upgradeBeaconControllerAddress,
 ) {
   const UpgradeBeacon = await ethers.getContractFactory('UpgradeBeacon');
   const upgradeBeacon = await UpgradeBeacon.deploy(
-    implementationAddress,
-    upgradeBeaconControllerAddress,
+      implementationAddress,
+      upgradeBeaconControllerAddress,
   );
   return upgradeBeacon.deployed();
 }
@@ -33,35 +33,50 @@ async function deployProxy(upgradeBeaconAddress, initializeData = '0x') {
   return proxy.deployed();
 }
 
-async function deployUpgradeSetup(
-  upgradeBeaconAddress,
-  implementationName,
-  initializeArgs = [],
-  initializeIdentifier = 'initialize',
+async function getInitializeData(
+    implementationName,
+    initializeArgs,
+    initializeIdentifier = 'initialize',
 ) {
+  if (initializeArgs.length === 0) {
+    return '0x';
+  }
+
   const Implementation = await ethers.getContractFactory(implementationName);
 
-  let initializeData;
-  if (initializeArgs.length === 0) {
-    initializeData = '0x';
-  } else {
-    const initializeFunction = Implementation.interface.getFunction(
+  const initializeFunction = Implementation.interface.getFunction(
       initializeIdentifier,
-    );
-    initializeData = Implementation.interface.encodeFunctionData(
+  );
+
+  const initializeData = Implementation.interface.encodeFunctionData(
       initializeFunction,
       initializeArgs,
-    );
-  }
+  );
+
+  return initializeData;
+}
+
+async function deployProxyWithImplementation(
+    upgradeBeaconAddress,
+    implementationName,
+    initializeArgs = [],
+    initializeIdentifier = 'initialize',
+) {
+  const initializeData = await getInitializeData(
+      implementationName,
+      initializeArgs,
+      initializeIdentifier,
+  );
 
   const proxy = await deployProxy(upgradeBeaconAddress, initializeData);
 
   // instantiate proxy with Proxy Contract address + Implementation interface
+  const Implementation = await ethers.getContractFactory(implementationName);
   const [signer] = await ethers.getSigners();
   const proxyWithImplementation = new ethers.Contract(
-    proxy.address,
-    Implementation.interface,
-    signer,
+      proxy.address,
+      Implementation.interface,
+      signer,
   );
   return { proxy, proxyWithImplementation };
 }
@@ -102,8 +117,8 @@ async function deployUpgradeSetupAndController(
 
 async function deployUpgradeSetupAndProxy(
     implementationName,
-    implementationDeployArgs = [],
-    proxyInitializeArgs = [],
+    constructorArgs = [],
+    initializeArgs = [],
     upgradeBeaconController,
     implementationInitializeFunctionIdentifier = 'initialize',
 ) {
@@ -111,13 +126,13 @@ async function deployUpgradeSetupAndProxy(
   if (upgradeBeaconController) {
     upgradeSetup = await deployUpgradeSetup(
         implementationName,
-        implementationDeployArgs,
+        constructorArgs,
         upgradeBeaconController,
     );
   } else {
     upgradeSetup = await deployUpgradeSetupAndController(
         implementationName,
-        implementationDeployArgs,
+        constructorArgs,
     );
     upgradeBeaconController = upgradeSetup.upgradeBeaconController;
   }
@@ -132,7 +147,7 @@ async function deployUpgradeSetupAndProxy(
   } = await deployProxyWithImplementation(
       upgradeBeacon.address,
       implementationName,
-      proxyInitializeArgs,
+      initializeArgs,
       implementationInitializeFunctionIdentifier,
   );
 
@@ -153,4 +168,5 @@ module.exports = {
   deployUpgradeSetupAndProxy,
   deployProxy,
   deployProxyWithImplementation,
+  getInitializeData,
 };

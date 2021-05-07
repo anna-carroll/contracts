@@ -6,8 +6,8 @@ const { deployUpgradeSetupAndProxy } = require('../scripts/deploy');
 const { testCases } = require('./testCases/receiveAndFallback.json');
 
 const RESULT_STRINGS = {
-  receive: 'Hits receive function ',
-  fallback: 'Hits fallback function ',
+  receive: 'Receive function',
+  fallback: 'Fallback function ',
   revert: 'Reverts ',
 };
 
@@ -16,9 +16,9 @@ describe('Receive and Fallback', async () => {
     const {
       testCaseDescription,
       contractName,
+      valueOnlyResult,
       dataAndValueResult,
       dataOnlyResult,
-      valueOnlyResult,
     } = testCase;
 
     describe(testCaseDescription, async () => {
@@ -42,8 +42,7 @@ describe('Receive and Fallback', async () => {
       }
 
       it(
-        RESULT_STRINGS[valueOnlyResult] +
-          'when value is non-zero and data is null',
+        'Value non-zero + data null     -> ' + RESULT_STRINGS[valueOnlyResult],
         async () => {
           const transactionPromise = signer.sendTransaction({
             to: proxy.address,
@@ -55,21 +54,8 @@ describe('Receive and Fallback', async () => {
       );
 
       it(
-        RESULT_STRINGS[dataOnlyResult] +
-          'when value is zero and data is not null',
-        async () => {
-          const transactionPromise = signer.sendTransaction({
-            to: proxy.address,
-            data: '0x1234',
-          });
-
-          await expectResult(dataOnlyResult, transactionPromise);
-        },
-      );
-
-      it(
-        RESULT_STRINGS[dataAndValueResult] +
-          'when value is non-zero and data is not null',
+        'Value non-zero + data present  -> ' +
+          RESULT_STRINGS[dataAndValueResult],
         async () => {
           const transactionPromise = signer.sendTransaction({
             to: proxy.address,
@@ -78,6 +64,18 @@ describe('Receive and Fallback', async () => {
           });
 
           await expectResult(dataAndValueResult, transactionPromise);
+        },
+      );
+
+      it(
+        'Value zero     + data present  -> ' + RESULT_STRINGS[dataOnlyResult],
+        async () => {
+          const transactionPromise = signer.sendTransaction({
+            to: proxy.address,
+            data: '0x1234',
+          });
+
+          await expectResult(dataOnlyResult, transactionPromise);
         },
       );
     });

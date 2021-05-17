@@ -18,7 +18,7 @@ npm install -g solhint
 
 ## Acknowledgements 
 Many thanks to
-- [prestwich](https://github.com/prestwich) for thought partnership, code reviews, & the original repo setup
+- [prestwich](https://github.com/prestwich) for thought partnership, code reviews, & repo structure
 - [0age](https://github.com/0age) for constant inspiration & patience with my questions
 
 ## License Notes 

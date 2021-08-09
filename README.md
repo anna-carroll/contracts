@@ -1,5 +1,4 @@
-# smart contracts by 𝖆𝖓𝖓𝖆
-
+# smart contracts by 𝖆𝖓𝖓𝖆 <p align="left"><a href="https://codeasart.herokuapp.com/anna-carroll/contracts"><img src="https://shields.io/badge/Buy-Code%20As%20Art-purple?logo=ethereum&style=for-the-badge" alt="Buy Code as Art" height="20"></a></p>
 ## Overview
 General-purpose smart contracts you might find useful for your own projects.
 These contracts have not been audited unless otherwise specified. 
